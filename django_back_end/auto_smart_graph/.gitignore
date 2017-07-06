@@ -2,4 +2,4 @@ bin/
 include/
 lib/
 *.Python
-*.pyc
+smart_backend/**/*.pyc
