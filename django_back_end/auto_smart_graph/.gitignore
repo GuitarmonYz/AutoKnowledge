@@ -2,4 +2,5 @@ bin/
 include/
 lib/
 *.Python
-smart_backend/*/*.pyc
+smart_backend/graph_provider/*.pyc
+smart_backend/smart_backend/*.pyc
