@@ -1,0 +1,63 @@
+<html>
+    <head>
+        <script src ="node_modules/vue/dist/vue.min.js"></script>
+        <script src ="node_modules/vue-resource/dist/vue-resource.min.js"></script>
+        <script src="https://unpkg.com/element-ui/lib/index.js"></script>
+        <script src="echarts.min.js"></script>
+        <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-default/index.css">
+
+        <style>
+            .el-row {
+                margin-bottom: 10px;
+            }
+            .el-col {
+                margin-bottom: 5px;
+                border-radius: 4px;
+            }
+        </style>
+    </head>
+<body>
+    <div style="margin-right: 10%;margin-left: 10%">
+    <div id="fixed" style ="width: auto;height:500px;"></div>
+    <div id="myVue">
+        <el-row :gutter="10">
+            <el-col v-for="condition in conditions" :span="4">
+                <el-input placeholder="查询条件" v-model="condition.content" icon="circle-close" :on-icon-click="RemoveCondition">
+                    <template slot="prepend" v-model="condition.type">{{condition.type}}</template>
+                </el-input>
+            </el-col>
+        </el-row>
+
+        <el-row :gutter="10">
+            <el-col v-for="target in targets" :span="4">
+                <el-input placeholder="查询目标" v-model="target.content" icon="circle-close" :on-icon-click="RemoveTarget">
+                    <template slot="prepend" v-model="target.type">{{target.type}}</template>
+                </el-input>
+            </el-col>
+        </el-row>
+        <el-row type="flex" justify="end">
+            <el-button @click="DrawGraph">Query</el-button>
+        </el-row>
+    </div>
+    <div id="resultVue">
+        <el-tabs>
+            <el-tab-pane label="Graph">
+                <div id = "main" style="height:800px"></div>
+            </el-tab-pane>
+            <el-tab-pane label="Table">
+                <template>
+                    <el-table :data="table_data" style="width: 100%" height="800" border>
+                        <el-table-column prop="type" label="Type" width="180">
+                        </el-table-column>
+                        <el-table-column prop="properties" label="Properties">
+                        </el-table-column>
+                    </el-table>
+                </template>
+            </el-tab-pane>
+        </el-tabs>
+    </div>
+    
+    <script src="graph.js"></script>
+
+</body>
+</html>

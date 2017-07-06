@@ -1,0 +1,68 @@
+<html>
+    <head>
+        <script src ="node_modules/vue/dist/vue.min.js"></script>
+        <script src ="node_modules/vue-resource/dist/vue-resource.min.js"></script>
+        <script src="https://unpkg.com/element-ui/lib/index.js"></script>
+        <script src="echarts.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.2.8/ace.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.2.8/ext-language_tools.js"></script>
+        <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-default/index.css">
+
+        <style>
+            .el-row {
+                margin-bottom: 10px;
+            }
+            .el-col {
+                margin-bottom: 5px;
+                border-radius: 4px;
+            }
+        </style>
+    </head>
+    <body>
+        <div style="margin-left:12%;margin-right:12%">
+        <div id="fixed" style ="width: auto;height:500px;"></div>
+        <div id="GraphVue">
+            <el-row :gutter="10">
+                <el-col v-for="condition in conditions" :span="3">
+                    <el-input icon="circle-close" :on-icon-click="RemoveCondition" :disabled="true">
+                        <template slot="prepend" v-model="condition">{{condition}}</template>
+                    </el-input>
+                </el-col>
+            </el-row>
+
+            <el-row :gutter="10">
+                <el-col v-for="target in targets" :span="3">
+                    <el-input icon="circle-close" :on-icon-click="RemoveTarget" :disabled="true">
+                        <template slot="prepend" v-model="target">{{target}}</template>
+                    </el-input>
+                </el-col>
+            </el-row>
+            <el-row type="flex" justify="end">
+                <el-button @click="GenerateTemplate">Generate Template</el-button>
+            </el-row>
+            <!--<template>-->
+            <el-row :gutter="4">
+                <el-col :span="16">
+                    <template>
+                        <div id="editor" style = "height:400px">
+                    </template>
+                    
+                </el-col>
+                <el-col :span="8">
+                    <el-table :data="table_data" style="width: 100%" height="400" border>
+                        <el-table-column prop="property" :label="label">
+                        </el-table-column>
+                    </el-table>
+                </el-col>
+            </el-row>
+                
+            <!--</template>-->
+        </div>
+        </div>
+
+
+        
+        <script src="GraphQuery.js"></script>
+        <script src="ace_control.js"></script>
+    </body>
+</html>
