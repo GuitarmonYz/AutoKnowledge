@@ -19,32 +19,58 @@ LOAD CSV WITH HEADERS FROM "file:///style.csv" AS row
 CREATE (:Style {style_id: row.entityid, style_name: row.name, kg_update_time: row.updatetime, kg_create_time: row.createtime, kg_is_enabled: row.isenabled, kg_is_removed: row.isremoved, model_id: row.modelid, year: row.year, style_body_type: row.stylebodytype, style_is_wagon: row.iswagon, style_msrp: row.nowmsrp, salestatus: row.salestatus, productionstatus: row.productionstatus, style_time_market: row.timetomarket, style_bodycolor: row.bodycolor, style_interior_color: row.neishicolor});
 
 USING PERIODIC COMMIT
+LOAD CSV WITH HEADERS FROM "file:///modelcolor.csv" AS row
+CREATE (:Color {color_id: row.entityid, model_id: row.modelid, color_name: row.name, color_value: row.value, color_type: row.type, kg_orderi_d: row.orderid, kg_is_removed: row.isremoved, kg_create_time: row.createtime, kg_update_time: row.updatetime});
+
+USING PERIODIC COMMIT
 LOAD CSV WITH HEADERS FROM "file:///dealer.csv" AS row
 CREATE (:Dealer {dealer_id: row.siteid, dealer_name: row.name, kg_website: row.url, kg_create_time: row.crawltime, brand_name: row.brand, brand_id: row.brandid, kg_telephone: row.telphone, kg_province: row.province, kg_city: row.city, kg_address: row.addr, site: row.site, dealer_price: row.price, dealer_news: row.news, dealer_introduction: row.introduction, dealer_hotlevel: row.hotlevel});
 
+
+
+//model _STYLE style
 USING PERIODIC COMMIT
 LOAD CSV WITH HEADERS FROM "file:///style.csv" AS row
 MATCH (model:Model {model_id: row.modelid})
 MATCH (style:Style {style_id: row.entityid})
 MERGE (model)-[:_STYLE]->(style);
 
+//model _COLOR color
+USING PERIODIC COMMIT
+LOAD CSV WITH HEADERS FROM "file:///modelcolor.csv" AS row
+MATCH (model:Model {model_id: row.modelid})
+MATCH (color:Color {color_id: row.entityid})
+MERGE (model)-[:_COLOR]->(color);
+
+//maker MANUFACTED_BY manufacturer
+USING PERIODIC COMMIT
+LOAD CSV WITH HEADERS FROM "file:///brand.csv" AS row
+MATCH (manufacturer:Manufacturer {manufacturer_id: row.manufacturerid})
+MATCH (maker:Maker {maker_id: row.entityid})
+MERGE (maker)-[:MANUFACTED_BY]->(manufacturer);
+
+//maker BELONG_TO brand
+USING PERIODIC COMMIT
+LOAD CSV WITH HEADERS FROM "file:///brand.csv" AS row
+MATCH (brand:Brand {brand_id: row.masterbrandid})
+MATCH (maker:Maker {make_id: row.entityid})
+MERGE (maker)-[:BELONG_TO]->(brand);
+
+//model _MAKER maker
+USING PERIODIC COMMIT
+LOAD CSV WITH HEADERS FROM "file:///model.csv" AS row
+MATCH (maker:maker {maker_id: row.makeid})
+MATCH (model:model {model_id: row.entityid})
+MERGE (model)-[:_MAKER]->(maker);
+
+//brand SOLD_BY dealer
 USING PERIODIC COMMIT
 LOAD CSV WITH HEADERS FROM "file:///dealer.csv" AS row
 MATCH (dealer:Dealer {dealer_id: row.siteid})
 MATCH (brand:Brand {brand_id: row.brandid})
 MERGE (brand)-[:SOLD_BY]->(dealer);
 
-USING PERIODIC COMMIT
-LOAD CSV WITH HEADERS FROM "file:///brand.csv" AS row
-MATCH (brand:Brand {brand_id: row.masterbrand})
-MATCH (maker:Maker {make_id: row.entityid})
-MERGE (maker)-[:BELONG_TO]->(brand);
 
-USING PERIODIC COMMIT
-LOAD CSV WITH HEADERS FROM "file:///brand.csv" AS row
-MATCH (manufacturer:Manufacturer {manufacturer_id: row.manufacturerid})
-MATCH (maker:Maker {maker_id: row.entityid})
-MERGE (maker)-[:MANUFACTED_BY]->(manufacturer);
 
 
 
