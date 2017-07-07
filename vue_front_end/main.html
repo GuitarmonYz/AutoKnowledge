@@ -22,7 +22,7 @@
     <div id="myVue">
         <el-row :gutter="10">
             <el-col v-for="condition in conditions" :span="4">
-                <el-input placeholder="²éÑ¯Ìõ¼þ" v-model="condition.content" icon="circle-close" :on-icon-click="RemoveCondition">
+                <el-input placeholder="ï¿½ï¿½Ñ¯ï¿½ï¿½ï¿½ï¿½" v-model="condition.content" icon="circle-close" :on-icon-click="RemoveCondition">
                     <template slot="prepend" v-model="condition.type">{{condition.type}}</template>
                 </el-input>
             </el-col>
@@ -30,7 +30,7 @@
 
         <el-row :gutter="10">
             <el-col v-for="target in targets" :span="4">
-                <el-input placeholder="²éÑ¯Ä¿±ê" v-model="target.content" icon="circle-close" :on-icon-click="RemoveTarget">
+                <el-input placeholder="ï¿½ï¿½Ñ¯Ä¿ï¿½ï¿½" v-model="target.content" icon="circle-close" :on-icon-click="RemoveTarget">
                     <template slot="prepend" v-model="target.type">{{target.type}}</template>
                 </el-input>
             </el-col>
@@ -57,7 +57,7 @@
         </el-tabs>
     </div>
     
-    <script src="graph.js"></script>
+    <script src="js/graph.js"></script>
 
 </body>
 </html>
