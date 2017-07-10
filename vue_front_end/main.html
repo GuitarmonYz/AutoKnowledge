@@ -22,7 +22,7 @@
     <div id="myVue">
         <el-row :gutter="10">
             <el-col v-for="condition in conditions" :span="4">
-                <el-input placeholder="ï¿½ï¿½Ñ¯ï¿½ï¿½ï¿½ï¿½" v-model="condition.content" icon="circle-close" :on-icon-click="RemoveCondition">
+                <el-input placeholder="²éÑ¯Ìõ¼þ" v-model="condition.content" icon="circle-close" :on-icon-click="RemoveCondition">
                     <template slot="prepend" v-model="condition.type">{{condition.type}}</template>
                 </el-input>
             </el-col>
@@ -30,7 +30,7 @@
 
         <el-row :gutter="10">
             <el-col v-for="target in targets" :span="4">
-                <el-input placeholder="ï¿½ï¿½Ñ¯Ä¿ï¿½ï¿½" v-model="target.content" icon="circle-close" :on-icon-click="RemoveTarget">
+                <el-input placeholder="²éÑ¯Ä¿±ê" v-model="target.content" icon="circle-close" :on-icon-click="RemoveTarget">
                     <template slot="prepend" v-model="target.type">{{target.type}}</template>
                 </el-input>
             </el-col>
@@ -43,6 +43,18 @@
         <el-tabs>
             <el-tab-pane label="Graph">
                 <div id = "main" style="height:800px"></div>
+                <el-table :data="expandable_data" style="width:100%">
+                    <el-table-column type="expand">
+                        <template scope="props">
+                            <div v-for="(value, key) in props.row">
+                                <p>{{key}}:{{value}}</p>
+                            </div>
+                        </template>
+                    </el-table-column>
+                    <el-table-column label="Name" :prop="prop_name">
+                        
+                    </el-table-column>
+                </el-table>
             </el-tab-pane>
             <el-tab-pane label="Table">
                 <template>

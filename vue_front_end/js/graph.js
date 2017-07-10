@@ -85,7 +85,9 @@ vm = new Vue({
 resultVue = new Vue({
     el:"#resultVue",
     data: {
-        table_data: []
+        table_data: [],
+        expandable_data: [{}],
+        prop_name: ""
         //loading: true
     }
     
@@ -108,7 +110,7 @@ function RawjsonProcessor(rawjson){
                 id_set.add(raw_node.id);
                 nodes.push(raw_node);
                 resultVue.$data.table_data.push({'type':raw_node.labels[0], 'properties':JSON.stringify(raw_node.properties)})
-                console.log(raw_node);
+                //console.log(raw_node);
             }
         });
         raw_graph.graph.relationships.forEach(function(raw_edge){
@@ -444,11 +446,16 @@ function GenerateGraph(auto){
     };
 
     myChart.setOption(option);
-    // _myChart.on('click', function (params) {
-    //     for (var property in params.data.properties){
-    //         console.log(params.data.properties[property]);
-    //     }
-    // });
+    myChart.on('click', function (params) {
+        // for (var property in params.data.properties){
+        //     //console.log(params.data.properties[property]);
+        //     resultVue.$data.expandable_data.push(params.data.properties);
+        //     console.log(resultVue.$data.expandable_data);
+        // }
+        resultVue.$data.prop_name = "name";
+        resultVue.$data.expandable_data = [];
+        resultVue.$data.expandable_data.push(params.data.properties);
+    });
 }
 
 function Seperater(json_array){
