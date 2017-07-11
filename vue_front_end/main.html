@@ -42,19 +42,26 @@
     <div id="resultVue">
         <el-tabs>
             <el-tab-pane label="Graph">
-                <div id = "main" style="height:800px"></div>
-                <el-table :data="expandable_data" style="width:100%">
-                    <el-table-column type="expand">
-                        <template scope="props">
-                            <div v-for="(value, key) in props.row">
-                                <p>{{key}}:{{value}}</p>
-                            </div>
-                        </template>
-                    </el-table-column>
-                    <el-table-column label="Name" :prop="prop_name">
-                        
-                    </el-table-column>
-                </el-table>
+                <el-row>
+                    <el-col :span="15">
+                        <div id = "main" style="height:800px"></div>
+                    </el-col>
+                    <el-col :span="9">
+                        <el-table :data="expandable_data" style="width:100%" height="800">
+                            <el-table-column type="expand">
+                                <template scope="props">
+                                    <div v-for="(value, key) in props.row">
+                                        <p>{{key}}:{{value}}</p>
+                                    </div>
+                                </template>
+                            </el-table-column>
+                            <el-table-column label="Name" :prop="prop_name">
+                            </el-table-column>
+                        </el-table>
+                    </el-col>
+                </el-row>
+                
+                
             </el-tab-pane>
             <el-tab-pane label="Table">
                 <template>

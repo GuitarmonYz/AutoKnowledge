@@ -1,9 +1,8 @@
-// var myChart = echarts.init(document.getElementById('main'));
 var fixed_chart = echarts.init(document.getElementById('fixed'));
 var globle_adjTable;
 var tmp_name;
 
-//Vue instance
+//承载图谱显示块的vue实例
 vm = new Vue({
     el:"#myVue",
     data:{
@@ -14,8 +13,10 @@ vm = new Vue({
         this.DrawFixedGraph();
     },
     methods:{
-        
-        //Draw query result
+        /**
+         * 异步加载查询数据，并调用函数可视化查询结果
+         * 首先调用BuildCypher查找路径并生成对应的cypher语句，通过vue-resources异步加载数据，最后调用GenerateGraph可视化查询结果
+         */
         DrawGraph: function(){
             //console.log(BuildCypher(conditions));
             let statement = BuildCypher(this.conditions,this.targets);
@@ -30,16 +31,15 @@ vm = new Vue({
                         } ]
                       },
                 headers:{"Content-Type":"application/json","Authorization":"Basic bmVvNGo6cm9vdA=="},
-                //emulateJSON: false
             }).then(res=>{
-                //console.log(res.body);
                 GenerateGraph(RawjsonProcessor(res.body));
-                //resultVue.$data.loading = false;
             });  
         },
-        //Draw knowledge graph
+        /**
+         * 通过固定cypher语句，获取知识图谱包涵的所有节点类别和它们的关系，调用函数可视化图谱，并生成邻接表
+         * 
+         */
         DrawFixedGraph: function(){
-            //console.log(form_vue.$data.source_content);
             this.$http({
                 method:"POST",
                 url: "http://localhost:7474/db/data/transaction/commit",
@@ -58,44 +58,45 @@ vm = new Vue({
                 //console.log(BuildCypher([{'type':'Brand','content':'condi'},{'type':'Model', 'content':' '},{'type':'Masterbrand', 'content':'condi'}],[{'type':'Dealer', 'content':' '}]));
             });
         },
-
+        
+        /**
+         * 将选中的查询条件从conditions里删除
+         * 需要注意，这里的参数en是element封装好的事件参数，无法客制，所以获取选中条件的类型是通过在dom树中查找该输入框标签得到的
+         * @param {any} en 
+         */
         RemoveCondition: function(en){
-            let tmp_idx = -1;
-            //console.log(en.target.parentElement.children[0].innerText);
-            this.conditions.forEach(function(item,index){
-                if(item.type == en.target.parentElement.children[0].innerText){
-                    tmp_idx = index;
-                }
-            });
+            //console.log(en);
+            let tmp_idx = this.conditions.indexOf(en.target.parentElement.children[0].innerText);
             this.conditions.splice(tmp_idx, 1);
         },
+        /**
+         * 将选中的查询目标从targets中删除
+         * 需要注意，这里的参数en是element封装好的事件参数，无法客制，所以获取选中目标的类型是通过在dom树中查找该输入框得到的
+         * @param {any} en 
+         */
         RemoveTarget: function(en){
-            let tmp_idx = -1;
-            // this.targets.forEach(function(item, index){
-            //     if(item.type == en.target.parentElement.children[0].innerText){
-            //         tmp_idx = index;
-            //     }
-            // });
-            tmp_idx = this.targets.indexOf(en.target.parentElement.children[0].innerText);
+            let tmp_idx = this.targets.indexOf(en.target.parentElement.children[0].innerText);
             this.targets.splice(tmp_idx, 1);
         }        
     }
 });
-
+//控制查询结果块的vue实例
 resultVue = new Vue({
     el:"#resultVue",
     data: {
         table_data: [],
         expandable_data: [{}],
         prop_name: ""
-        //loading: true
     }
-    
-
 });
-
-
 //Formating responsed data from Neo4j server for queried data
+
+/**
+ * 将查询结果原始数据处理成echarts需要的数据格式
+ * 
+ * @param {any} rawjson 从neo4j接口获得的原始数据，数据结构详见数据结构文档
+ * @returns 返回echarts要求的数据格式
+ */
 function RawjsonProcessor(rawjson){
     let id_set = new Set();
     let edge_set = new Set();
@@ -109,8 +110,8 @@ function RawjsonProcessor(rawjson){
             if(!id_set.has(raw_node.id)){
                 id_set.add(raw_node.id);
                 nodes.push(raw_node);
+                //push data to table_data in order to display in table format
                 resultVue.$data.table_data.push({'type':raw_node.labels[0], 'properties':JSON.stringify(raw_node.properties)})
-                //console.log(raw_node);
             }
         });
         raw_graph.graph.relationships.forEach(function(raw_edge){
@@ -126,6 +127,13 @@ function RawjsonProcessor(rawjson){
 }
 
 //Formating responsed data from Neo4j server for knowledge graph building data
+
+/**
+ * 将从neo4j查询到的原始数据格式化成echarts需求格式
+ * 需要注意，该函数处理的是用来生成知识图谱的数据，不是查询数据
+ * @param {any} rawjson 数据结构详见结构文档
+ * @returns 
+ */
 function FixedDataProcessor(rawjson){
     let edges = new Array();
     let nodes = new Array();
@@ -148,6 +156,13 @@ function FixedDataProcessor(rawjson){
 }
 
 //Echart configuration for building knowledge graph
+
+/**
+ * 通过echarts绘制图谱，并利用echarts的graphic接口自定义选取控件
+ * 
+ * @param {any} knowledge 预处理成echarts格式的图谱数据
+ * @param {any} _fixed_chart 在外部init的echarts实例
+ */
 function GenerateFixedGraph(knowledge,_fixed_chart){
     _fixed_chart.hideLoading();
     option = {
@@ -206,6 +221,10 @@ function GenerateFixedGraph(knowledge,_fixed_chart){
                     style: {
                         fill:'#F0F8FF'
                     },
+                    /**
+                     * 当鼠标over右半圈时将右半圈变色
+                     * 
+                     */
                     onmouseover: function(){
                         _fixed_chart.setOption({
                             graphic:{
@@ -216,6 +235,10 @@ function GenerateFixedGraph(knowledge,_fixed_chart){
                             }
                         });
                     },
+                    /**
+                     * 当鼠标移出右半圈时将右半圈变色
+                     * 
+                     */
                     onmouseout: function(){
                         _fixed_chart.setOption({
                             graphic:{
@@ -226,8 +249,11 @@ function GenerateFixedGraph(knowledge,_fixed_chart){
                             }
                         });
                     },
+                    /**
+                     * 鼠标点击右半圈时将选中目标压入vue的targets里，并隐藏选取控件
+                     * 
+                     */
                     onclick: function(){
-                        //vm.$data.target_type = tmp_name;
                         vm.$data.targets.push({"type":tmp_name,"content":''});
                         _fixed_chart.setOption({
                             graphic: [
@@ -267,6 +293,10 @@ function GenerateFixedGraph(knowledge,_fixed_chart){
                     style: {
                         fill:'#F0F8FF'
                     },
+                    /**
+                     * 鼠标移入左半圈时使左半圈变色
+                     * 
+                     */
                     onmouseover: function(){
                         _fixed_chart.setOption({
                             graphic:{
@@ -277,6 +307,10 @@ function GenerateFixedGraph(knowledge,_fixed_chart){
                             }
                         });
                     },
+                    /**
+                     * 鼠标移出左半圈时左半圈变色
+                     * 
+                     */
                     onmouseout: function(){
                         _fixed_chart.setOption({
                             graphic:{
@@ -287,6 +321,10 @@ function GenerateFixedGraph(knowledge,_fixed_chart){
                             }
                         });
                     },
+                    /**
+                     * 鼠标点击左半圈时，将选中节点压入vue的conditions里，并隐藏选取控件
+                     * 
+                     */
                     onclick: function(){
                         //vm.$data.source_type = tmp_name;
                         vm.$data.conditions.push({"type": tmp_name, "content":''});
@@ -339,6 +377,7 @@ function GenerateFixedGraph(knowledge,_fixed_chart){
                 draggable: true,
                 data: knowledge.nodes,
                 links: knowledge.links,
+                //主要通过调节以下参数，获得良好的力引导布局
                 force: {
                     edgeLength: 100,
                     repulsion: 400,
@@ -347,6 +386,7 @@ function GenerateFixedGraph(knowledge,_fixed_chart){
             }]
     };
     _fixed_chart.setOption(option);
+    //双击图表中节点时显示选取控件
     _fixed_chart.on('dblclick', function (params) {
         tmp_name = params.data.name;
         _fixed_chart.setOption({
@@ -376,6 +416,12 @@ function GenerateFixedGraph(knowledge,_fixed_chart){
 }
 
 //Echart configuration, draw force graph with responsed pre-processed result.
+
+/**
+ * 通过echarts将预处理过的查询数据渲染成力引导布局图
+ * 
+ * @param {any} auto 预处过的查询数据
+ */
 function GenerateGraph(auto){
     var myChart = echarts.init(document.getElementById('main'));
     myChart.showLoading();
@@ -398,7 +444,6 @@ function GenerateGraph(auto){
         //         return str;
         //     }
         // },
-        
         series: [{
             type: 'graph',
             layout: 'force',
@@ -434,6 +479,7 @@ function GenerateGraph(auto){
                     properties: node.properties
                 }
             }),
+            //主要通过以下参数获得良好可视化效果，还可以再优化
             force: {
                 // initLayout: 'circular'
                 // repulsion: 20,
@@ -447,17 +493,19 @@ function GenerateGraph(auto){
 
     myChart.setOption(option);
     myChart.on('click', function (params) {
-        // for (var property in params.data.properties){
-        //     //console.log(params.data.properties[property]);
-        //     resultVue.$data.expandable_data.push(params.data.properties);
-        //     console.log(resultVue.$data.expandable_data);
-        // }
         resultVue.$data.prop_name = "name";
         resultVue.$data.expandable_data = [];
         resultVue.$data.expandable_data.push(params.data.properties);
     });
 }
 
+
+/**
+ * 将conditions和targets中的type抽取出来并返回数组
+ * 
+ * @param {any} json_array 
+ * @returns 
+ */
 function Seperater(json_array){
     let res = [];
     json_array.forEach(function(json){
@@ -467,6 +515,13 @@ function Seperater(json_array){
 }
 
 //Construct Cypher clause according to inputed conditions
+/**
+ * 根据查询条件，调用searchpath函数获取路径，拼接出对应的cypher语句
+ * 需要注意，因为可以多点查询，当起始点在中间时，会有左路径和右路径之分，拼接左右路径时箭头的方向会有区别
+ * @param {any} conditions vue datamodel里的conditons
+ * @param {any} targets vue datamodel里的targets
+ * @returns 
+ */
 function BuildCypher(conditions, targets){
     let path = SearchPath(Seperater(conditions),Seperater(targets),globle_adjTable);
     let left_path = new String();
@@ -508,45 +563,14 @@ function BuildCypher(conditions, targets){
     return final_clause; 
 }
 
-//return path(Array) with given adjcency table and soure target pair
-// function SearchPath(source, target, adjTable){
-//     //map = new Map();
-//     let path = [];
-//     let stack = [];
-//     let visited = new Set();
-//     let pre_depth = 0;
-//     visited.add(source);
-//     adjTable.get(source).forEach(function(str_link){
-//         stack.push([str_link,1]);
-//     });
-//     while (stack.length!=0){
-//         //console.log(stack);
-//         let pop_array = stack.pop();
-//         let cur_depth = pop_array[1];
-//         let pop_res = pop_array[0].split('/');
-//         let v = pop_res[0];
-//         if (cur_depth <= pre_depth){
-//             for (let i = 0;i < (pre_depth - cur_depth + 1);i++){
-//                 path.pop();
-//             }
-//         }
-//         pre_depth = cur_depth;
-//         if (!visited.has(v)){
-//             visited.add(v);
-//             path.push(pop_res);
-//             if (v == target){
-//                 //console.log(path);
-//                 return path;
-//             }
-//             adjTable.get(v).forEach(function(str_link){
-//                 if (!visited.has(str_link.split('/')[0])){
-//                     stack.push([str_link,cur_depth+1]);
-//                 }
-//             });
-//         }
-//     }
-// }
-
+/**
+ * 利用dfs以source数组中的第一个元素为起点寻找所有的targets，通过在dfs时记录深度，从而获得转折点，并得到路径
+ * 需要注意，这个函数可以获取子图，在buildpath函数中最好加入判断，使路径为线性结构
+ * @param {any} source 包含所有选中的查询条件
+ * @param {any} target 包含所有选中的查询目标
+ * @param {any} adjTable 无向图邻接表
+ * @returns 
+ */
 function SearchPath(source, target, adjTable){
     let targets_set = new Set(source.concat(target));
     let path = [];
@@ -608,6 +632,12 @@ function SearchPath(source, target, adjTable){
 }
 
 //Generate adjcency table given pre-processed json data
+/**
+ * 将预处理过的图谱数据转化成无向图邻接表
+ * 需要注意，用无向图邻接表是为了双向查询
+ * @param {any} graph 
+ * @returns 
+ */
 function GenerateAdjTable(graph){
     let adjTable = new Map();
     graph.links.forEach(function(link){
