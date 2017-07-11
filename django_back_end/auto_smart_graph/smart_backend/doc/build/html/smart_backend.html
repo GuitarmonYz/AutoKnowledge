@@ -1,0 +1,372 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>smart_backend package &mdash; audo_graph_back_end 0.0.1 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="genindex.html"/>
+        <link rel="search" title="Search" href="search.html"/>
+    <link rel="top" title="audo_graph_back_end 0.0.1 documentation" href="index.html"/> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> audo_graph_back_end
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.0.1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <!-- Local TOC -->
+              <div class="local-toc"><ul>
+<li><a class="reference internal" href="#">smart_backend package</a><ul>
+<li><a class="reference internal" href="#submodules">Submodules</a></li>
+<li><a class="reference internal" href="#module-smart_backend.DBUtil">smart_backend.DBUtil module</a></li>
+<li><a class="reference internal" href="#module-smart_backend.GraphUtil">smart_backend.GraphUtil module</a></li>
+<li><a class="reference internal" href="#module-smart_backend.SessionManager">smart_backend.SessionManager module</a></li>
+<li><a class="reference internal" href="#module-smart_backend.serializer">smart_backend.serializer module</a></li>
+<li><a class="reference internal" href="#module-smart_backend.settings">smart_backend.settings module</a></li>
+<li><a class="reference internal" href="#smart-backend-urls-module">smart_backend.urls module</a></li>
+<li><a class="reference internal" href="#module-smart_backend.wsgi">smart_backend.wsgi module</a></li>
+<li><a class="reference internal" href="#module-smart_backend">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</div>
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">audo_graph_back_end</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>smart_backend package</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/smart_backend.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="smart-backend-package">
+<h1>smart_backend package<a class="headerlink" href="#smart-backend-package" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-smart_backend.DBUtil">
+<span id="smart-backend-dbutil-module"></span><h2>smart_backend.DBUtil module<a class="headerlink" href="#module-smart_backend.DBUtil" title="Permalink to this headline">¶</a></h2>
+<p>此模块通过调用GraphUtil和Serializer提供查询入口的底层函数</p>
+<dl class="function">
+<dt id="smart_backend.DBUtil.auto_query">
+<code class="descclassname">smart_backend.DBUtil.</code><code class="descname">auto_query</code><span class="sig-paren">(</span><em>conditions</em>, <em>targets</em>, <em>enable_graph</em>, <em>enable_like</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/smart_backend/DBUtil.html#auto_query"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#smart_backend.DBUtil.auto_query" title="Permalink to this definition">¶</a></dt>
+<dd><p>综合调用先前写好的模块进行查询并返回结果，需要注意，为了节约服务器内存，使用了yield直接返回neo4j-driver返回的每一行数据，因此无法归类，需要用户得到数据后进行处理
+:params conditions: 用户请求中的conditions
+:params targets: 用户请求中的targets
+:params enable_graph: 返回图数据或者需求数据
+:yield serial后的每一行数据</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="smart_backend.DBUtil.test_cypher">
+<code class="descclassname">smart_backend.DBUtil.</code><code class="descname">test_cypher</code><span class="sig-paren">(</span><em>conditions</em>, <em>targets</em>, <em>enable_graph</em>, <em>enable_like</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/smart_backend/DBUtil.html#test_cypher"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#smart_backend.DBUtil.test_cypher" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+<div class="section" id="module-smart_backend.GraphUtil">
+<span id="smart-backend-graphutil-module"></span><h2>smart_backend.GraphUtil module<a class="headerlink" href="#module-smart_backend.GraphUtil" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="smart_backend.GraphUtil.GraphUtil">
+<em class="property">class </em><code class="descclassname">smart_backend.GraphUtil.</code><code class="descname">GraphUtil</code><a class="reference internal" href="_modules/smart_backend/GraphUtil.html#GraphUtil"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#smart_backend.GraphUtil.GraphUtil" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/2/library/functions.html#object" title="(in Python v2.7)"><code class="xref py py-class docutils literal"><span class="pre">object</span></code></a></p>
+<p>本模块提供所有关于图操作的util函数，包括生成邻接表，路径查找，和生成cypher语句</p>
+<dl class="method">
+<dt id="smart_backend.GraphUtil.GraphUtil.build_cypher">
+<code class="descname">build_cypher</code><span class="sig-paren">(</span><em>conditions</em>, <em>targets</em>, <em>enable_like</em>, <em>enable_graph</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/smart_backend/GraphUtil.html#GraphUtil.build_cypher"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#smart_backend.GraphUtil.GraphUtil.build_cypher" title="Permalink to this definition">¶</a></dt>
+<dd><p>根据搜素出的路径构建cypher语句，可利用enable_graph参数控制是否返回图数据，需要注意在构建查询语句时，起始点左边和边的路径箭头方向是相反的
+:params conditions: 用户请求中的conditions
+:params targets: 用户请求中的targets
+:params enable_like: 布尔值，是否启用like
+:params enable_graph: 布尔值，是否返回图数据
+:return cypher字符串语句</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="smart_backend.GraphUtil.generate_adjtable">
+<code class="descclassname">smart_backend.GraphUtil.</code><code class="descname">generate_adjtable</code><span class="sig-paren">(</span><em>graph</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/smart_backend/GraphUtil.html#generate_adjtable"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#smart_backend.GraphUtil.generate_adjtable" title="Permalink to this definition">¶</a></dt>
+<dd><p>根据知识图谱的结构数据生成无向图邻接表，注意此处使用无向图邻接表主要为了构建查询语句时可以双向查询路径
+:params graph:知识图谱的结构数据
+:return 邻接表，一个dict，格式详见数据结构文档</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="smart_backend.GraphUtil.get_knowledge_graph">
+<code class="descclassname">smart_backend.GraphUtil.</code><code class="descname">get_knowledge_graph</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/smart_backend/GraphUtil.html#get_knowledge_graph"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#smart_backend.GraphUtil.get_knowledge_graph" title="Permalink to this definition">¶</a></dt>
+<dd><p>利用requests调用neo4j的http接口，获得知识图谱的结构
+:return 接受到的数据，已转化为python内部格式</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="smart_backend.GraphUtil.knowledge_graph_processor">
+<code class="descclassname">smart_backend.GraphUtil.</code><code class="descname">knowledge_graph_processor</code><span class="sig-paren">(</span><em>raw_json</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/smart_backend/GraphUtil.html#knowledge_graph_processor"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#smart_backend.GraphUtil.knowledge_graph_processor" title="Permalink to this definition">¶</a></dt>
+<dd><p>将neo4j http接口返回的数据预处理，该函数同前端的processor相同
+:params raw_json:neo4j http接口返回的原始数据
+:return 包含节点和边数据的dict</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="smart_backend.GraphUtil.search_path">
+<code class="descclassname">smart_backend.GraphUtil.</code><code class="descname">search_path</code><span class="sig-paren">(</span><em>conditions</em>, <em>targets</em>, <em>adj_table</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/smart_backend/GraphUtil.html#search_path"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#smart_backend.GraphUtil.search_path" title="Permalink to this definition">¶</a></dt>
+<dd><p>给定两点或多点查询连接所有点的路径，同前端中的SearchPath函数相同
+:params conditions:所有查询条件，e.g. list[“Brand”,”dealer”]
+:params targets: 所有查询目标，e.g. list[“Brand”, “dealer”]
+:params adj_table: 邻接表
+:return 路径数组，数据格式同前端函数，可参考数据结构文档</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-smart_backend.SessionManager">
+<span id="smart-backend-sessionmanager-module"></span><h2>smart_backend.SessionManager module<a class="headerlink" href="#module-smart_backend.SessionManager" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="smart_backend.SessionManager.SessionManager">
+<em class="property">class </em><code class="descclassname">smart_backend.SessionManager.</code><code class="descname">SessionManager</code><span class="sig-paren">(</span><em>uri</em>, <em>username=None</em>, <em>password=None</em>, <em>encrypted=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/smart_backend/SessionManager.html#SessionManager"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#smart_backend.SessionManager.SessionManager" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/2/library/functions.html#object" title="(in Python v2.7)"><code class="xref py py-class docutils literal"><span class="pre">object</span></code></a></p>
+<p>this class is an encapsulation of raw neo4j-driver object, which provides certain level of control on the driver</p>
+<dl class="attribute">
+<dt id="smart_backend.SessionManager.SessionManager.session">
+<code class="descname">session</code><a class="headerlink" href="#smart_backend.SessionManager.SessionManager.session" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-smart_backend.serializer">
+<span id="smart-backend-serializer-module"></span><h2>smart_backend.serializer module<a class="headerlink" href="#module-smart_backend.serializer" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="smart_backend.serializer.NodeSerializer">
+<em class="property">class </em><code class="descclassname">smart_backend.serializer.</code><code class="descname">NodeSerializer</code><span class="sig-paren">(</span><em>instance=None</em>, <em>data=&lt;class rest_framework.fields.empty&gt;</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/smart_backend/serializer.html#NodeSerializer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#smart_backend.serializer.NodeSerializer" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">rest_framework.serializers.Serializer</span></code></p>
+<p>a serializer used to serialize neo4j-driver returned node objects</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="smart_backend.serializer.PathSerializer">
+<em class="property">class </em><code class="descclassname">smart_backend.serializer.</code><code class="descname">PathSerializer</code><span class="sig-paren">(</span><em>instance=None</em>, <em>data=&lt;class rest_framework.fields.empty&gt;</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/smart_backend/serializer.html#PathSerializer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#smart_backend.serializer.PathSerializer" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">rest_framework.serializers.Serializer</span></code></p>
+<p>a serializer used to serialize neo4j-driver returned path objects</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="smart_backend.serializer.RelationshipSerializer">
+<em class="property">class </em><code class="descclassname">smart_backend.serializer.</code><code class="descname">RelationshipSerializer</code><span class="sig-paren">(</span><em>instance=None</em>, <em>data=&lt;class rest_framework.fields.empty&gt;</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/smart_backend/serializer.html#RelationshipSerializer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#smart_backend.serializer.RelationshipSerializer" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">rest_framework.serializers.Serializer</span></code></p>
+<p>a serializer used to serialize neo4j-driver returned relationship objects</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-smart_backend.settings">
+<span id="smart-backend-settings-module"></span><h2>smart_backend.settings module<a class="headerlink" href="#module-smart_backend.settings" title="Permalink to this headline">¶</a></h2>
+<p>Django settings for smart_backend project.</p>
+<p>Generated by ‘django-admin startproject’ using Django 1.11.2.</p>
+<p>For more information on this file, see
+<a class="reference external" href="https://docs.djangoproject.com/en/1.11/topics/settings/">https://docs.djangoproject.com/en/1.11/topics/settings/</a></p>
+<p>For the full list of settings and their values, see
+<a class="reference external" href="https://docs.djangoproject.com/en/1.11/ref/settings/">https://docs.djangoproject.com/en/1.11/ref/settings/</a></p>
+</div>
+<div class="section" id="smart-backend-urls-module">
+<h2>smart_backend.urls module<a class="headerlink" href="#smart-backend-urls-module" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-smart_backend.wsgi">
+<span id="smart-backend-wsgi-module"></span><h2>smart_backend.wsgi module<a class="headerlink" href="#module-smart_backend.wsgi" title="Permalink to this headline">¶</a></h2>
+<p>WSGI config for smart_backend project.</p>
+<p>It exposes the WSGI callable as a module-level variable named <code class="docutils literal"><span class="pre">application</span></code>.</p>
+<p>For more information on this file, see
+<a class="reference external" href="https://docs.djangoproject.com/en/1.11/howto/deployment/wsgi/">https://docs.djangoproject.com/en/1.11/howto/deployment/wsgi/</a></p>
+</div>
+<div class="section" id="module-smart_backend">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-smart_backend" title="Permalink to this headline">¶</a></h2>
+</div>
+</div>
+
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2017, zhao yan.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'0.0.1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

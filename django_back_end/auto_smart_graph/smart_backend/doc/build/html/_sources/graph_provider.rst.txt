@@ -1,0 +1,69 @@
+graph\_provider package
+=======================
+
+Subpackages
+-----------
+
+.. toctree::
+
+    graph_provider.migrations
+
+Submodules
+----------
+
+graph\_provider\.admin module
+-----------------------------
+
+.. automodule:: graph_provider.admin
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+graph\_provider\.apps module
+----------------------------
+
+.. automodule:: graph_provider.apps
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+graph\_provider\.models module
+------------------------------
+
+.. automodule:: graph_provider.models
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+graph\_provider\.services module
+--------------------------------
+
+.. automodule:: graph_provider.services
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+graph\_provider\.tests module
+-----------------------------
+
+.. automodule:: graph_provider.tests
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+graph\_provider\.urls module
+----------------------------
+
+.. automodule:: graph_provider.urls
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+
+Module contents
+---------------
+
+.. automodule:: graph_provider
+    :members:
+    :undoc-members:
+    :show-inheritance:

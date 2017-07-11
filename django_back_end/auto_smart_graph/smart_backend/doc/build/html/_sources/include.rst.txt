@@ -1,0 +1,2 @@
+.. include:: ../../graph_provider
+.. include:: ../../smart_backend

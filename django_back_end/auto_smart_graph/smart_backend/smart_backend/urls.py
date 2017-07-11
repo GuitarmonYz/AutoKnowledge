@@ -15,7 +15,7 @@ Including another URLconf
 """
 from django.conf.urls import include,url
 from django.contrib import admin
-
+"""register web service url within graph_provider app"""
 urlpatterns = [
     url(r'^services/', include('graph_provider.urls')),
     url(r'^admin/', admin.site.urls),

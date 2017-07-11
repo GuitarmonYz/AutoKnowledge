@@ -1,12 +1,23 @@
+# -*- coding: utf-8 -*-
 import requests
 
 class GraphUtil(object):
+    """本模块提供所有关于图操作的util函数，包括生成邻接表，路径查找，和生成cypher语句"""
     def __init__(self):
         self.adj_table_ = self._get_adjtable(self)
     @staticmethod
     def _get_adjtable(self):
         return generate_adjtable(knowledge_graph_processor(get_knowledge_graph()))
     def build_cypher(self, conditions, targets, enable_like, enable_graph):
+        """
+        根据搜素出的路径构建cypher语句，可利用enable_graph参数控制是否返回图数据，需要注意在构建查询语句时，起始点左边和边的路径箭头方向是相反的
+        :params conditions: 用户请求中的conditions
+        :params targets: 用户请求中的targets
+        :params enable_like: 布尔值，是否启用like
+        :params enable_graph: 布尔值，是否返回图数据
+        :return cypher字符串语句
+        """
+        # conditions和targets的传入search_path时需要将type提取存入list
         path = search_path([key['type'] for key in conditions], [key['type'] for key in targets], self.adj_table_)
         left_path_clause = str()
         right_path_clause = str()
@@ -38,12 +49,17 @@ class GraphUtil(object):
         else:
             for path_array in path[0]:
                 return_graph_clause += path_array[1] + ','
+        # 返回图数据则在返回的数据中需要加入relationship
         if enable_graph:
             return 'match ' + path_clause + where_clause + ' return ' + return_tmp_clause[0: -2] + return_graph_clause[0: -2], [key['type'] for key in targets]+[relationship[1] for relationship in path[0]+path[1]]
         else:
             return 'match ' + path_clause + where_clause + ' return ' + return_tmp_clause[0: -2], [key['type'] for key in targets]
 
 def get_knowledge_graph():
+    """
+    利用requests调用neo4j的http接口，获得知识图谱的结构
+    :return 接受到的数据，已转化为python内部格式
+    """
     url = 'http://localhost:7474/db/data/transaction/commit'
     headers = {'Content-Type':'Application/json', 'Authorization':'Basic bmVvNGo6cm9vdA=='}
     data = {"statements" : \
@@ -53,6 +69,11 @@ def get_knowledge_graph():
     return response.json()
 
 def knowledge_graph_processor(raw_json):
+    """
+    将neo4j http接口返回的数据预处理，该函数同前端的processor相同
+    :params raw_json:neo4j http接口返回的原始数据
+    :return 包含节点和边数据的dict
+    """
     edges = []
     nodes = []
     node_set = set()
@@ -70,6 +91,11 @@ def knowledge_graph_processor(raw_json):
     return {'nodes':nodes, 'links':edges}
 
 def generate_adjtable(graph):
+    """
+    根据知识图谱的结构数据生成无向图邻接表，注意此处使用无向图邻接表主要为了构建查询语句时可以双向查询路径
+    :params graph:知识图谱的结构数据
+    :return 邻接表，一个dict，格式详见数据结构文档
+    """
     adj_table = {}
     for link in graph['links']:
         if not adj_table.has_key(link['source']):
@@ -87,6 +113,13 @@ def generate_adjtable(graph):
     return adj_table
 
 def search_path(conditions, targets, adj_table):
+    """
+    给定两点或多点查询连接所有点的路径，同前端中的SearchPath函数相同
+    :params conditions:所有查询条件，e.g. list["Brand","dealer"]
+    :params targets: 所有查询目标，e.g. list["Brand", "dealer"]
+    :params adj_table: 邻接表
+    :return 路径数组，数据格式同前端函数，可参考数据结构文档
+    """
     targets_set = set(conditions + targets)
     path = []
     all_path = []

@@ -79,8 +79,9 @@ WSGI_APPLICATION = 'smart_backend.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        # 'ENGINE': 'django.db.backends.sqlite3',
+        # 'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        # django doesn't have neo4j driver, so a customized SessionManager was developed upon the official neo4j python driver
     }
 }
 

@@ -1,0 +1,388 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>smart_backend.GraphUtil &mdash; audo_graph_back_end 0.0.1 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="../../genindex.html"/>
+        <link rel="search" title="Search" href="../../search.html"/>
+    <link rel="top" title="audo_graph_back_end 0.0.1 documentation" href="../../index.html"/>
+        <link rel="up" title="Module code" href="../index.html"/> 
+
+  
+  <script src="../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> audo_graph_back_end
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.0.1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <!-- Local TOC -->
+              <div class="local-toc"></div>
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">audo_graph_back_end</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+        
+      <li>smart_backend.GraphUtil</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for smart_backend.GraphUtil</h1><div class="highlight"><pre>
+<span></span><span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="kn">import</span> <span class="nn">requests</span>
+
+<div class="viewcode-block" id="GraphUtil"><a class="viewcode-back" href="../../smart_backend.html#smart_backend.GraphUtil.GraphUtil">[docs]</a><span class="k">class</span> <span class="nc">GraphUtil</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;本模块提供所有关于图操作的util函数，包括生成邻接表，路径查找，和生成cypher语句&quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">adj_table_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_adjtable</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">_get_adjtable</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">generate_adjtable</span><span class="p">(</span><span class="n">knowledge_graph_processor</span><span class="p">(</span><span class="n">get_knowledge_graph</span><span class="p">()))</span>
+<div class="viewcode-block" id="GraphUtil.build_cypher"><a class="viewcode-back" href="../../smart_backend.html#smart_backend.GraphUtil.GraphUtil.build_cypher">[docs]</a>    <span class="k">def</span> <span class="nf">build_cypher</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">conditions</span><span class="p">,</span> <span class="n">targets</span><span class="p">,</span> <span class="n">enable_like</span><span class="p">,</span> <span class="n">enable_graph</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        根据搜素出的路径构建cypher语句，可利用enable_graph参数控制是否返回图数据，需要注意在构建查询语句时，起始点左边和边的路径箭头方向是相反的</span>
+<span class="sd">        :params conditions: 用户请求中的conditions</span>
+<span class="sd">        :params targets: 用户请求中的targets</span>
+<span class="sd">        :params enable_like: 布尔值，是否启用like</span>
+<span class="sd">        :params enable_graph: 布尔值，是否返回图数据</span>
+<span class="sd">        :return cypher字符串语句</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># conditions和targets的传入search_path时需要将type提取存入list</span>
+        <span class="n">path</span> <span class="o">=</span> <span class="n">search_path</span><span class="p">([</span><span class="n">key</span><span class="p">[</span><span class="s1">&#39;type&#39;</span><span class="p">]</span> <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">conditions</span><span class="p">],</span> <span class="p">[</span><span class="n">key</span><span class="p">[</span><span class="s1">&#39;type&#39;</span><span class="p">]</span> <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">targets</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">adj_table_</span><span class="p">)</span>
+        <span class="n">left_path_clause</span> <span class="o">=</span> <span class="nb">str</span><span class="p">()</span>
+        <span class="n">right_path_clause</span> <span class="o">=</span> <span class="nb">str</span><span class="p">()</span>
+        <span class="n">path_clause</span> <span class="o">=</span> <span class="nb">str</span><span class="p">()</span>
+        <span class="n">where_tmp_clause</span> <span class="o">=</span> <span class="nb">str</span><span class="p">()</span>
+        <span class="n">return_tmp_clause</span> <span class="o">=</span> <span class="nb">str</span><span class="p">()</span>
+        <span class="n">return_graph_clause</span> <span class="o">=</span> <span class="nb">str</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">path_array</span> <span class="ow">in</span> <span class="n">path</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>
+            <span class="k">if</span> <span class="n">path_array</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;&gt;&#39;</span><span class="p">:</span>
+                <span class="n">left_path_clause</span> <span class="o">=</span> <span class="s1">&#39;(&#39;</span> <span class="o">+</span> <span class="n">path_array</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;:&#39;</span> <span class="o">+</span> <span class="n">path_array</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;) &lt;&#39;</span> <span class="o">+</span> <span class="s1">&#39;- [&#39;</span> <span class="o">+</span> <span class="n">path_array</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span><span class="s1">&#39;:&#39;</span> <span class="o">+</span> <span class="n">path_array</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;] -&#39;</span> <span class="o">+</span> <span class="n">left_path_clause</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">left_path_clause</span> <span class="o">=</span> <span class="s1">&#39; (&#39;</span> <span class="o">+</span> <span class="n">path_array</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;:&#39;</span> <span class="o">+</span> <span class="n">path_array</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;) &#39;</span> <span class="o">+</span> <span class="s1">&#39;- [&#39;</span><span class="o">+</span> <span class="n">path_array</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span><span class="s1">&#39;:&#39;</span> <span class="o">+</span> <span class="n">path_array</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;] -&gt;&#39;</span> <span class="o">+</span> <span class="n">left_path_clause</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">path</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">path_array</span> <span class="ow">in</span> <span class="n">path</span><span class="p">[</span><span class="mi">1</span><span class="p">]:</span>
+                <span class="k">if</span> <span class="n">path_array</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;&gt;&#39;</span><span class="p">:</span>
+                    <span class="n">right_path_clause</span> <span class="o">+=</span> <span class="s1">&#39; - [&#39;</span><span class="o">+</span><span class="n">path_array</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">+</span><span class="s1">&#39;:&#39;</span> <span class="o">+</span> <span class="n">path_array</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;] -&#39;</span> <span class="o">+</span> <span class="n">path_array</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;(&#39;</span><span class="o">+</span><span class="n">path_array</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">+</span><span class="s1">&#39;:&#39;</span><span class="o">+</span><span class="n">path_array</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">+</span><span class="s1">&#39;)&#39;</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">right_path_clause</span> <span class="o">+=</span> <span class="s1">&#39; &#39;</span><span class="o">+</span><span class="n">path_array</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;- [&#39;</span><span class="o">+</span><span class="n">path_array</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">+</span><span class="s1">&#39;:&#39;</span> <span class="o">+</span> <span class="n">path_array</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;] - &#39;</span> <span class="o">+</span> <span class="s1">&#39;(&#39;</span><span class="o">+</span><span class="n">path_array</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">+</span><span class="s1">&#39;:&#39;</span><span class="o">+</span><span class="n">path_array</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">+</span><span class="s1">&#39;)&#39;</span>
+        <span class="n">path_clause</span> <span class="o">=</span> <span class="n">left_path_clause</span> <span class="o">+</span> <span class="s1">&#39;(&#39;</span> <span class="o">+</span> <span class="n">conditions</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s1">&#39;type&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;:&#39;</span> <span class="o">+</span> <span class="n">conditions</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s1">&#39;type&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;)&#39;</span> <span class="o">+</span> <span class="n">right_path_clause</span>
+        <span class="k">for</span> <span class="n">pair</span> <span class="ow">in</span> <span class="n">conditions</span> <span class="o">+</span> <span class="n">targets</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">pair</span><span class="p">[</span><span class="s1">&#39;content&#39;</span><span class="p">]:</span>
+                <span class="n">where_tmp_clause</span> <span class="o">+=</span> <span class="n">pair</span><span class="p">[</span><span class="s1">&#39;type&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;.&#39;</span> <span class="o">+</span> <span class="n">key</span> <span class="o">+</span> <span class="s1">&#39; = </span><span class="se">\&quot;</span><span class="s1">&#39;</span> <span class="o">+</span> <span class="n">pair</span><span class="p">[</span><span class="s1">&#39;content&#39;</span><span class="p">][</span><span class="n">key</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\&quot;</span><span class="s1"> and &#39;</span>
+        <span class="n">where_clause</span> <span class="o">=</span> <span class="s1">&#39; where &#39;</span> <span class="o">+</span> <span class="n">where_tmp_clause</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span> <span class="o">-</span><span class="mi">4</span><span class="p">]</span>
+        <span class="k">for</span> <span class="n">target</span> <span class="ow">in</span> <span class="n">targets</span><span class="p">:</span>
+            <span class="n">return_tmp_clause</span> <span class="o">+=</span> <span class="n">target</span><span class="p">[</span><span class="s1">&#39;type&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;, &#39;</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">path</span><span class="p">)</span> <span class="o">&gt;</span><span class="mi">1</span> <span class="p">:</span>
+            <span class="k">for</span> <span class="n">path_array</span> <span class="ow">in</span> <span class="n">path</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">+</span><span class="n">path</span><span class="p">[</span><span class="mi">1</span><span class="p">]:</span>
+                <span class="n">return_graph_clause</span> <span class="o">+=</span> <span class="n">path_array</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;, &#39;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">path_array</span> <span class="ow">in</span> <span class="n">path</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>
+                <span class="n">return_graph_clause</span> <span class="o">+=</span> <span class="n">path_array</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;,&#39;</span>
+        <span class="c1"># 返回图数据则在返回的数据中需要加入relationship</span>
+        <span class="k">if</span> <span class="n">enable_graph</span><span class="p">:</span>
+            <span class="k">return</span> <span class="s1">&#39;match &#39;</span> <span class="o">+</span> <span class="n">path_clause</span> <span class="o">+</span> <span class="n">where_clause</span> <span class="o">+</span> <span class="s1">&#39; return &#39;</span> <span class="o">+</span> <span class="n">return_tmp_clause</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span> <span class="o">-</span><span class="mi">2</span><span class="p">]</span> <span class="o">+</span> <span class="n">return_graph_clause</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span> <span class="o">-</span><span class="mi">2</span><span class="p">],</span> <span class="p">[</span><span class="n">key</span><span class="p">[</span><span class="s1">&#39;type&#39;</span><span class="p">]</span> <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">targets</span><span class="p">]</span><span class="o">+</span><span class="p">[</span><span class="n">relationship</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">relationship</span> <span class="ow">in</span> <span class="n">path</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">+</span><span class="n">path</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="s1">&#39;match &#39;</span> <span class="o">+</span> <span class="n">path_clause</span> <span class="o">+</span> <span class="n">where_clause</span> <span class="o">+</span> <span class="s1">&#39; return &#39;</span> <span class="o">+</span> <span class="n">return_tmp_clause</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span> <span class="o">-</span><span class="mi">2</span><span class="p">],</span> <span class="p">[</span><span class="n">key</span><span class="p">[</span><span class="s1">&#39;type&#39;</span><span class="p">]</span> <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">targets</span><span class="p">]</span></div></div>
+
+<div class="viewcode-block" id="get_knowledge_graph"><a class="viewcode-back" href="../../smart_backend.html#smart_backend.GraphUtil.get_knowledge_graph">[docs]</a><span class="k">def</span> <span class="nf">get_knowledge_graph</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    利用requests调用neo4j的http接口，获得知识图谱的结构</span>
+<span class="sd">    :return 接受到的数据，已转化为python内部格式</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">url</span> <span class="o">=</span> <span class="s1">&#39;http://localhost:7474/db/data/transaction/commit&#39;</span>
+    <span class="n">headers</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;Content-Type&#39;</span><span class="p">:</span><span class="s1">&#39;Application/json&#39;</span><span class="p">,</span> <span class="s1">&#39;Authorization&#39;</span><span class="p">:</span><span class="s1">&#39;Basic bmVvNGo6cm9vdA==&#39;</span><span class="p">}</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;statements&quot;</span> <span class="p">:</span> \
+    <span class="p">[{</span><span class="s2">&quot;statement&quot;</span> <span class="p">:</span> <span class="s2">&quot;match (a)-[r]-&gt;(b) return distinct labels(a),labels(b), type(r)&quot;</span><span class="p">}]}</span>
+    <span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">json</span><span class="o">=</span><span class="n">data</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="n">headers</span><span class="p">)</span>
+    <span class="c1"># json_res = response.json()</span>
+    <span class="k">return</span> <span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="knowledge_graph_processor"><a class="viewcode-back" href="../../smart_backend.html#smart_backend.GraphUtil.knowledge_graph_processor">[docs]</a><span class="k">def</span> <span class="nf">knowledge_graph_processor</span><span class="p">(</span><span class="n">raw_json</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    将neo4j http接口返回的数据预处理，该函数同前端的processor相同</span>
+<span class="sd">    :params raw_json:neo4j http接口返回的原始数据</span>
+<span class="sd">    :return 包含节点和边数据的dict</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">edges</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">nodes</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">node_set</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">relationship</span> <span class="ow">in</span> <span class="n">raw_json</span><span class="p">[</span><span class="s1">&#39;results&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="s1">&#39;data&#39;</span><span class="p">]:</span>
+        <span class="n">new_edge</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;source&quot;</span><span class="p">:</span> <span class="n">relationship</span><span class="p">[</span><span class="s1">&#39;row&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span>
+            <span class="s2">&quot;target&quot;</span><span class="p">:</span> <span class="n">relationship</span><span class="p">[</span><span class="s1">&#39;row&#39;</span><span class="p">][</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span>
+            <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="n">relationship</span><span class="p">[</span><span class="s1">&#39;row&#39;</span><span class="p">][</span><span class="mi">2</span><span class="p">]</span>
+        <span class="p">}</span>
+        <span class="n">node_set</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">relationship</span><span class="p">[</span><span class="s1">&#39;row&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span>
+        <span class="n">node_set</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">relationship</span><span class="p">[</span><span class="s1">&#39;row&#39;</span><span class="p">][</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span>
+        <span class="n">edges</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">new_edge</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="n">node_set</span><span class="p">:</span>
+        <span class="n">nodes</span><span class="o">.</span><span class="n">append</span><span class="p">({</span><span class="s1">&#39;name&#39;</span><span class="p">:</span><span class="n">node</span><span class="p">})</span>
+    <span class="k">return</span> <span class="p">{</span><span class="s1">&#39;nodes&#39;</span><span class="p">:</span><span class="n">nodes</span><span class="p">,</span> <span class="s1">&#39;links&#39;</span><span class="p">:</span><span class="n">edges</span><span class="p">}</span></div>
+
+<div class="viewcode-block" id="generate_adjtable"><a class="viewcode-back" href="../../smart_backend.html#smart_backend.GraphUtil.generate_adjtable">[docs]</a><span class="k">def</span> <span class="nf">generate_adjtable</span><span class="p">(</span><span class="n">graph</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    根据知识图谱的结构数据生成无向图邻接表，注意此处使用无向图邻接表主要为了构建查询语句时可以双向查询路径</span>
+<span class="sd">    :params graph:知识图谱的结构数据</span>
+<span class="sd">    :return 邻接表，一个dict，格式详见数据结构文档</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">adj_table</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">for</span> <span class="n">link</span> <span class="ow">in</span> <span class="n">graph</span><span class="p">[</span><span class="s1">&#39;links&#39;</span><span class="p">]:</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">adj_table</span><span class="o">.</span><span class="n">has_key</span><span class="p">(</span><span class="n">link</span><span class="p">[</span><span class="s1">&#39;source&#39;</span><span class="p">]):</span>
+            <span class="n">source_tmp</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+            <span class="n">source_tmp</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">link</span><span class="p">[</span><span class="s1">&#39;target&#39;</span><span class="p">]</span><span class="o">+</span><span class="s1">&#39;/&#39;</span><span class="o">+</span><span class="n">link</span><span class="p">[</span><span class="s1">&#39;value&#39;</span><span class="p">]</span><span class="o">+</span><span class="s1">&#39;/&gt;&#39;</span><span class="p">)</span>
+            <span class="n">adj_table</span><span class="p">[</span><span class="n">link</span><span class="p">[</span><span class="s1">&#39;source&#39;</span><span class="p">]]</span> <span class="o">=</span> <span class="n">source_tmp</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">adj_table</span><span class="p">[</span><span class="n">link</span><span class="p">[</span><span class="s1">&#39;source&#39;</span><span class="p">]]</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">link</span><span class="p">[</span><span class="s1">&#39;target&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;/&#39;</span> <span class="o">+</span> <span class="n">link</span><span class="p">[</span><span class="s1">&#39;value&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;/&gt;&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">adj_table</span><span class="o">.</span><span class="n">has_key</span><span class="p">(</span><span class="n">link</span><span class="p">[</span><span class="s1">&#39;target&#39;</span><span class="p">]):</span>
+            <span class="n">target_tmp</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+            <span class="n">target_tmp</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">link</span><span class="p">[</span><span class="s1">&#39;source&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;/&#39;</span> <span class="o">+</span> <span class="n">link</span><span class="p">[</span><span class="s1">&#39;value&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;/&lt;&#39;</span><span class="p">)</span>
+            <span class="n">adj_table</span><span class="p">[</span><span class="n">link</span><span class="p">[</span><span class="s1">&#39;target&#39;</span><span class="p">]]</span> <span class="o">=</span> <span class="n">target_tmp</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">adj_table</span><span class="p">[</span><span class="n">link</span><span class="p">[</span><span class="s1">&#39;target&#39;</span><span class="p">]]</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">link</span><span class="p">[</span><span class="s1">&#39;source&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;/&#39;</span> <span class="o">+</span> <span class="n">link</span><span class="p">[</span><span class="s1">&#39;value&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;/&lt;&#39;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">adj_table</span></div>
+
+<div class="viewcode-block" id="search_path"><a class="viewcode-back" href="../../smart_backend.html#smart_backend.GraphUtil.search_path">[docs]</a><span class="k">def</span> <span class="nf">search_path</span><span class="p">(</span><span class="n">conditions</span><span class="p">,</span> <span class="n">targets</span><span class="p">,</span> <span class="n">adj_table</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    给定两点或多点查询连接所有点的路径，同前端中的SearchPath函数相同</span>
+<span class="sd">    :params conditions:所有查询条件，e.g. list[&quot;Brand&quot;,&quot;dealer&quot;]</span>
+<span class="sd">    :params targets: 所有查询目标，e.g. list[&quot;Brand&quot;, &quot;dealer&quot;]</span>
+<span class="sd">    :params adj_table: 邻接表</span>
+<span class="sd">    :return 路径数组，数据格式同前端函数，可参考数据结构文档</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">targets_set</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">conditions</span> <span class="o">+</span> <span class="n">targets</span><span class="p">)</span>
+    <span class="n">path</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">all_path</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">stack</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">visited</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+    <span class="n">pre_depth</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">find_depth</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">visited</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">conditions</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+    <span class="n">targets_set</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">conditions</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+    <span class="k">for</span> <span class="n">str_link</span> <span class="ow">in</span> <span class="n">adj_table</span><span class="p">[</span><span class="n">conditions</span><span class="p">[</span><span class="mi">0</span><span class="p">]]:</span>
+        <span class="n">stack</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">str_link</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
+    <span class="k">while</span> <span class="n">stack</span><span class="p">:</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">targets_set</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">path</span><span class="p">:</span>
+                <span class="n">all_path</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">all_path</span>
+        <span class="n">pop_array</span> <span class="o">=</span> <span class="n">stack</span><span class="o">.</span><span class="n">pop</span><span class="p">()</span>
+        <span class="n">cur_depth</span> <span class="o">=</span> <span class="n">pop_array</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">pop_res</span> <span class="o">=</span> <span class="n">pop_array</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">)</span>
+        <span class="n">vertex</span> <span class="o">=</span> <span class="n">pop_res</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="n">cur_depth</span> <span class="o">&lt;=</span> <span class="n">pre_depth</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">cur_depth</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span>
+                <span class="k">while</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="p">(</span><span class="n">pre_depth</span> <span class="o">-</span> <span class="n">find_depth</span><span class="p">):</span>
+                    <span class="n">path</span><span class="o">.</span><span class="n">pop</span><span class="p">()</span>
+                    <span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
+                <span class="k">if</span> <span class="n">path</span><span class="p">:</span>
+                    <span class="n">all_path</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+                <span class="n">find_depth</span> <span class="o">=</span> <span class="mi">0</span>
+                <span class="n">path</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span>
+                <span class="k">while</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="p">(</span><span class="n">pre_depth</span> <span class="o">-</span> <span class="n">cur_depth</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
+                    <span class="n">path</span><span class="o">.</span><span class="n">pop</span><span class="p">()</span>
+                    <span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="n">pre_depth</span> <span class="o">=</span> <span class="n">cur_depth</span>
+        <span class="k">if</span> <span class="n">vertex</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">visited</span><span class="p">:</span>
+            <span class="n">visited</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">vertex</span><span class="p">)</span>
+            <span class="n">path</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">pop_res</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">vertex</span> <span class="ow">in</span> <span class="n">targets_set</span><span class="p">:</span>
+                <span class="n">find_depth</span> <span class="o">=</span> <span class="n">pop_array</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+                <span class="n">targets_set</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">vertex</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">str_link</span> <span class="ow">in</span> <span class="n">adj_table</span><span class="p">[</span><span class="n">vertex</span><span class="p">]:</span>
+                <span class="k">if</span> <span class="n">str_link</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">visited</span><span class="p">:</span>
+                    <span class="n">stack</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">str_link</span><span class="p">,</span> <span class="n">cur_depth</span><span class="o">+</span><span class="mi">1</span><span class="p">])</span></div>
+</pre></div>
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2017, zhao yan.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../',
+            VERSION:'0.0.1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>
