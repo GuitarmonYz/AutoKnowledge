@@ -15,7 +15,7 @@ By double clicking on the nodes, you will activate target/condition choosing cir
 
 The query result is a JSON object returned from Neo4j API, and then rendered in the form of graph, the number of returned results can be limited by setting params in source code, after node reducing, the ratio of in-out degree of each node remains the same. By clicking on the node, a detailed information table will be presented on the left panel.
 
-![graph_query_demo](/Users/zhaoyan/workstuff/AutoSmart/auto_graph/graph_query_demo.gif)
+![graph_query_demo](https://github.com/GuitarmonYz/AutoKnowledge/blob/master/graph_query_demo.gif?raw=true)
 
 ### Implementation 
 
@@ -31,7 +31,7 @@ The Vue.js makes it easy to deal with manipulating data in this data-rich applic
 
 The back-end is developed using Django REST Framework. It connects with Neo4j using neo4j native python api, and provide query service with a post request that contains targets and conditions information.
 
-![django_query_demo](/Users/zhaoyan/workstuff/AutoSmart/auto_graph/django_query_demo.gif)
+![django_query_demo](https://github.com/GuitarmonYz/AutoKnowledge/blob/master/django_query_demo.gif?raw=true)
 
 ### Implementation
 
@@ -43,7 +43,7 @@ Like front-end, large of amont of effort is dedicated to graph search algorithms
 
 The database can be managed with a provided web-based UI, which supports the graph query, adding nodes and edges in the knowledge graph etc. It provides rest api for front-end and give access to back-end driver.
 
-![database_demo](/Users/zhaoyan/workstuff/AutoSmart/auto_graph/database_demo.gif)
+![database_demo](https://github.com/GuitarmonYz/AutoKnowledge/blob/master/database_demo.gif?raw=true)
 
 ### Implementation
 
