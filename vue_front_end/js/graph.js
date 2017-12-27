@@ -67,7 +67,7 @@ vm = new Vue({
          * @param {any} en 
          */
         RemoveCondition: function(en){
-            //console.log(en);
+            console.log(en);
             let tmp_idx = this.conditions.indexOf(en.target.parentElement.children[0].innerText);
             this.conditions.splice(tmp_idx, 1);
         },

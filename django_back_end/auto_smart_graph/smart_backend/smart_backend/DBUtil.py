@@ -34,6 +34,7 @@ def auto_query(conditions, targets, enable_graph, enable_like):
     :yield serial后的每一行数据
     """
     cypher_clause, targets = GRAPHUITL.build_cypher(conditions, targets, enable_graph, enable_like)
+    print cypher_clause
     node_set = set()
     relation_set = set()
     with MANAGER.session as session:

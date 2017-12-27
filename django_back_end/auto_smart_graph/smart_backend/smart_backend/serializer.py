@@ -13,7 +13,7 @@ class RelationshipSerializer(serializers.Serializer):
     id = serializers.IntegerField()
     start = serializers.IntegerField()
     end = serializers.IntegerField()
-    type = serializers.DictField()
+    type = serializers.CharField()
 
 class PathSerializer(serializers.Serializer):
     """a serializer used to serialize neo4j-driver returned path objects

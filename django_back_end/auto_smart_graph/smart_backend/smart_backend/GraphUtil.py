@@ -8,7 +8,7 @@ class GraphUtil(object):
     @staticmethod
     def _get_adjtable(self):
         return generate_adjtable(knowledge_graph_processor(get_knowledge_graph()))
-    def build_cypher(self, conditions, targets, enable_like, enable_graph):
+    def build_cypher(self, conditions, targets, enable_graph, enable_like):
         """
         根据搜素出的路径构建cypher语句，可利用enable_graph参数控制是否返回图数据，需要注意在构建查询语句时，起始点左边和边的路径箭头方向是相反的
         :params conditions: 用户请求中的conditions
@@ -19,12 +19,14 @@ class GraphUtil(object):
         """
         # conditions和targets的传入search_path时需要将type提取存入list
         path = search_path([key['type'] for key in conditions], [key['type'] for key in targets], self.adj_table_)
+        print path
         left_path_clause = str()
         right_path_clause = str()
         path_clause = str()
         where_tmp_clause = str()
         return_tmp_clause = str()
         return_graph_clause = str()
+        return_relationship = []
         for path_array in path[0]:
             if path_array[2] == '>':
                 left_path_clause = '(' + path_array[0] + ':' + path_array[0] + ') <' + '- [' + path_array[1] +':' + path_array[1] + '] -' + left_path_clause
@@ -46,12 +48,14 @@ class GraphUtil(object):
         if len(path) >1 :
             for path_array in path[0]+path[1]:
                 return_graph_clause += path_array[1] + ', '
+                return_relationship = path[0]+path[1]
         else:
             for path_array in path[0]:
                 return_graph_clause += path_array[1] + ','
+                return_relationship = path[0]
         # 返回图数据则在返回的数据中需要加入relationship
         if enable_graph:
-            return 'match ' + path_clause + where_clause + ' return ' + return_tmp_clause[0: -2] + return_graph_clause[0: -2], [key['type'] for key in targets]+[relationship[1] for relationship in path[0]+path[1]]
+            return 'match ' + path_clause + where_clause + ' return ' + return_tmp_clause[0: -2] +', '+ return_graph_clause[0: -1], [key['type'] for key in targets]+[relationship[1] for relationship in return_relationship]
         else:
             return 'match ' + path_clause + where_clause + ' return ' + return_tmp_clause[0: -2], [key['type'] for key in targets]
 
@@ -121,6 +125,7 @@ def search_path(conditions, targets, adj_table):
     :return 路径数组，数据格式同前端函数，可参考数据结构文档
     """
     targets_set = set(conditions + targets)
+    # print adj_table
     path = []
     all_path = []
     stack = []
@@ -131,7 +136,7 @@ def search_path(conditions, targets, adj_table):
     targets_set.remove(conditions[0])
     for str_link in adj_table[conditions[0]]:
         stack.append([str_link, 1])
-    while stack:
+    while stack or path:
         if not targets_set:
             if path:
                 all_path.append(path)
@@ -140,7 +145,6 @@ def search_path(conditions, targets, adj_table):
         cur_depth = pop_array[1]
         pop_res = pop_array[0].split('/')
         vertex = pop_res[0]
-
         if cur_depth <= pre_depth:
             if cur_depth == 1:
                 i = 0

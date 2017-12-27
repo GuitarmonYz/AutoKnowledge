@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from contextlib import contextmanager
-from neo4j.v1 import GraphDatabase, basic_auth, TRUST_DEFAULT
+from neo4j.v1 import GraphDatabase, basic_auth
 
 class SessionManager(object):
     """this class is an encapsulation of raw neo4j-driver object, which provides certain level of control on the driver"""
@@ -8,7 +8,7 @@ class SessionManager(object):
         self.uri = uri
         self.driver = self._get_db_driver(uri, username, password, encrypted)
     @staticmethod
-    def _get_db_driver(uri, username=None, password=None, encrypted=True, max_pool_size=50, trust=TRUST_DEFAULT):
+    def _get_db_driver(uri, username=None, password=None, encrypted=True, max_pool_size=50, trust=0):
         '''
         :param uri: Bolt uri
         :type uri: str
