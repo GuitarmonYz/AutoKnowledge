@@ -1,4 +1,5 @@
 var fixed_chart = echarts.init(document.getElementById('fixed'));
+
 var globle_adjTable;
 var tmp_name;
 
@@ -32,6 +33,7 @@ vm = new Vue({
                       },
                 headers:{"Content-Type":"application/json","Authorization":"Basic bmVvNGo6cm9vdA=="},
             }).then(res=>{
+                
                 GenerateGraph(RawjsonProcessor(res.body));
             });  
         },
@@ -86,7 +88,13 @@ resultVue = new Vue({
     data: {
         table_data: [],
         expandable_data: [{}],
-        prop_name: ""
+        prop_name: "",
+        limit: 150
+    },
+    methods:{
+        ChangeLimit: function(param){
+            myChart.setOption()
+        }
     }
 });
 //Formating responsed data from Neo4j server for queried data
@@ -415,6 +423,54 @@ function GenerateFixedGraph(knowledge,_fixed_chart){
     });
 }
 
+function Filter(node_array,link_array){
+    let freq_map = new Map();
+    let vip_freq_map = new Map();
+    let res_id_set = new Set();
+    let limit = 50;
+    let freq_sum = 0;
+    let filtered_nodes = [];
+    for (let link of link_array){
+        if (freq_map.has(link.source)) 
+            freq_map.set(link.source,freq_map.get(link.source)+1);
+        else 
+            freq_map.set(link.source, 1);
+        if (freq_map.has(link.target))
+            freq_map.set(link.target, freq_map.get(link.target)+1);
+        else
+            freq_map.set(link.target, 1);
+    }
+    for (let [key, freq] of freq_map){
+        if (freq > 5){
+            vip_freq_map.set(key,freq);
+            res_id_set.add(key);
+            freq_sum += freq;
+        }
+    }
+    if (limit < freq_sum){
+        for (let [key,freq] of vip_freq_map)
+            vip_freq_map.set(key,Math.ceil(freq*(limit/freq_sum)));
+    }
+    
+    for (let link of link_array){
+        if (vip_freq_map.has(link.source)&&vip_freq_map.get(link.source)>0){
+            res_id_set.add(link.target);
+            vip_freq_map.set(link.source,vip_freq_map.get(link.source)-1);
+        }
+        if (vip_freq_map.has(link.target)&&vip_freq_map.get(link.target)>0){
+            res_id_set.add(link.source);
+            vip_freq_map.set(link.target,vip_freq_map.get(link.target)-1);
+        }
+    }
+    for (let node of node_array){
+        if (res_id_set.has((node.id).toString())){
+            filtered_nodes.push(node);
+        }       
+    }
+    return filtered_nodes;
+}
+
+
 //Echart configuration, draw force graph with responsed pre-processed result.
 
 /**
@@ -424,7 +480,7 @@ function GenerateFixedGraph(knowledge,_fixed_chart){
  */
 function GenerateGraph(auto){
     var myChart = echarts.init(document.getElementById('main'));
-    myChart.showLoading();
+    //_myChart.showLoading();
     myChart.hideLoading();
     option = {
         // tooltip:{
@@ -468,7 +524,7 @@ function GenerateGraph(auto){
             },
             edgeSymbol: [null,'arrow'],
             draggable: true,
-            data: auto.nodes.map(function(node){
+            data: Filter(auto.nodes, auto.links).map(function(node){
                 return {
                     id: node.id,
                     //针对不同实体需要重构name！！！！！！
@@ -479,6 +535,17 @@ function GenerateGraph(auto){
                     properties: node.properties
                 }
             }),
+            // data: auto.nodes.map(function(node){
+            //     return {
+            //         id: node.id,
+            //         //针对不同实体需要重构name！！！！！！
+            //         //针对不同实体需要重构name！！！！！！
+            //         //针对不同实体需要重构name！！！！！！
+            //         //重要的事情说三遍！！！！！！！！！！
+            //         name: node.properties.name,
+            //         properties: node.properties
+            //     }
+            // }),
             //主要通过以下参数获得良好可视化效果，还可以再优化
             force: {
                 // initLayout: 'circular'
@@ -585,7 +652,7 @@ function SearchPath(source, target, adjTable){
         stack.push([str_link,1]);
     });
     
-    while (stack.length!=0){
+    while (stack.length!=0 || path.length != 0){
         if (targets_set.size == 0){
             if (path.length != 0)
                 all_path.push(path);

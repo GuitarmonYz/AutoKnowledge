@@ -2,9 +2,9 @@
     <head>
         <script src ="node_modules/vue/dist/vue.min.js"></script>
         <script src ="node_modules/vue-resource/dist/vue-resource.min.js"></script>
-        <script src="https://unpkg.com/element-ui/lib/index.js"></script>
+        <script src="js/index.js"></script>
         <script src="echarts.min.js"></script>
-        <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-default/index.css">
+        <link rel="stylesheet" href="index.css">
 
         <style>
             .el-row {
@@ -22,7 +22,7 @@
     <div id="myVue">
         <el-row :gutter="10">
             <el-col v-for="condition in conditions" :span="4">
-                <el-input placeholder="查询条件" v-model="condition.content" icon="circle-close" :on-icon-click="RemoveCondition">
+                <el-input placeholder="test" v-model="condition.content" icon="circle-close" :on-icon-click="RemoveCondition">
                     <template slot="prepend" v-model="condition.type">{{condition.type}}</template>
                 </el-input>
             </el-col>
@@ -30,7 +30,7 @@
 
         <el-row :gutter="10">
             <el-col v-for="target in targets" :span="4">
-                <el-input placeholder="查询目标" v-model="target.content" icon="circle-close" :on-icon-click="RemoveTarget">
+                <el-input placeholder="test" v-model="target.content" icon="circle-close" :on-icon-click="RemoveTarget">
                     <template slot="prepend" v-model="target.type">{{target.type}}</template>
                 </el-input>
             </el-col>
@@ -40,9 +40,9 @@
         </el-row>
     </div>
     <div id="resultVue">
-        <el-tabs>
+        <el-tabs type="border-card">
             <el-tab-pane label="Graph">
-                <el-row>
+                <!-- <el-row>
                     <el-col :span="15">
                         <div id = "main" style="height:800px"></div>
                     </el-col>
@@ -59,18 +59,18 @@
                             </el-table-column>
                         </el-table>
                     </el-col>
-                </el-row>
+                </el-row> -->
                 
                 
             </el-tab-pane>
             <el-tab-pane label="Table">
                 <template>
-                    <el-table :data="table_data" style="width: 100%" height="800" border>
+                    <!-- <el-table style="width: 100%" height="800" border>
                         <el-table-column prop="type" label="Type" width="180">
                         </el-table-column>
                         <el-table-column prop="properties" label="Properties">
                         </el-table-column>
-                    </el-table>
+                    </el-table> -->
                 </template>
             </el-tab-pane>
         </el-tabs>

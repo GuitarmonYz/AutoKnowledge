@@ -87,12 +87,14 @@ vm = new Vue({
             for(let condition of this.conditions){
                 console.log(condition);
                 let tmp_con = {};
-                tmp_con[condition] = {};
+                tmp_con['type'] = condition;
+                tmp_con['content'] = {}
                 json_template['conditions'].push(tmp_con);
             }
             for(let target of this.targets){
                 let tmp_con = {};
-                tmp_con[target] = {};
+                tmp_con['type'] = target;
+                tmp_con['content'] = {}
                 json_template['targets'].push(tmp_con);
             }
             json_template['enable_graph'] = false;
