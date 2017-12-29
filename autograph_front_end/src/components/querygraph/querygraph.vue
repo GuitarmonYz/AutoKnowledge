@@ -5,6 +5,12 @@
 
 <script>
   import echarts from 'echarts';
+  import {BuildCypher} from '@/common/js/graphUtil';
+  import {GenerateGraph} from '@/common/js/graphUtil';
+  import {RawjsonProcessor} from '@/common/js/graphUtil';
+  import {GenerateFixedGraph} from '@/common/js/graphUtil';
+  import {FixedDataProcessor} from '@/common/js/graphUtil';
+  import {GenerateAdjTable} from '@/common/js/graphUtil';
   var fixedChart = echarts.init(document.getElementById('graph_holder'));
   export default {
     data: {
