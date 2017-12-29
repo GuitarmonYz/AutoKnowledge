@@ -154,7 +154,7 @@ export function GenerateFixedGraph (knowledge, _fixedChart) {
              *
              */
             onclick: function () {
-              vm.$data.targets.push({ "type": tmp_name, "content": '' });
+              vm.$data.targets.push({ 'type': tmp_name, 'content': '' });
               _fixedChart.setOption({
                 graphic: [
                   {
