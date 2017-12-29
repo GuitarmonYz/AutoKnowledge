@@ -1,6 +1,6 @@
 # autograph_front_end
 
-> front-end for auto knowledge graph
+> This is the front-end that is under refactoring based on the code from the folder vue_front_end, webpack and component-based development is used here, trying to add vuex to the project for better maintaining
 
 ## Build Setup
 
