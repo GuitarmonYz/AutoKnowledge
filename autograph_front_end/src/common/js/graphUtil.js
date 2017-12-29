@@ -1,3 +1,4 @@
+import store from '@/store/store';
 /**
  * 将查询结果原始数据处理成echarts需要的数据格式
  *
@@ -9,7 +10,6 @@ export function RawjsonProcessor (rawjson) {
   let edgeSet = new Set();
   let nodes = [];
   let edges = [];
-  resultVue.$data.table_data = [];
   rawjson.results['0'].data.forEach(function (rawGraph) {
     rawGraph.graph.nodes.forEach(function (rawNode) {
       rawNode.id = parseInt(rawNode.id);
@@ -17,7 +17,8 @@ export function RawjsonProcessor (rawjson) {
         idSet.add(rawNode.id);
         nodes.push(rawNode);
         // push data to table_data in order to display in table format
-        resultVue.$data.table_data.push({'type': rawNode.labels[0], 'properties': JSON.stringify(rawNode.properties)});
+        // resultVue.$data.table_data.push({'type': rawNode.labels[0], 'properties': JSON.stringify(rawNode.properties)});
+        store.commit('PUSH_MESSAGE', {'type': rawNode.labels[0], 'properties': JSON.stringify(rawNode.properties)});
       }
     });
     rawGraph.graph.relationships.forEach(function (rawEdge) {
@@ -154,7 +155,8 @@ export function GenerateFixedGraph (knowledge, _fixedChart) {
              *
              */
             onclick: function () {
-              vm.$data.targets.push({ 'type': tmp_name, 'content': '' });
+              // vm.$data.targets.push({ 'type': tmp_name, 'content': '' });
+              store.commit('PUSH_TARGET', { 'type': store.state.tmpName, 'content': '' });
               _fixedChart.setOption({
                 graphic: [
                   {
@@ -227,7 +229,8 @@ export function GenerateFixedGraph (knowledge, _fixedChart) {
              */
             onclick: function () {
               // vm.$data.source_type = tmp_name;
-              vm.$data.conditions.push({ 'type': tmp_name, 'content': '' });
+              // vm.$data.conditions.push({ 'type': tmp_name, 'content': '' });
+              store.commit('PUSH_CONDITION', { 'type': store.state.tmpName, 'content': '' });
               _fixedChart.setOption({
                 graphic: [
                   {
@@ -288,7 +291,8 @@ export function GenerateFixedGraph (knowledge, _fixedChart) {
   _fixedChart.setOption(option);
   // 双击图表中节点时显示选取控件
   _fixedChart.on('dblclick', function (params) {
-    tmp_name = params.data.name;
+    // tmp_name = params.data.name;
+    store.commit('SET_TMPNAME', params.data.name);
     _fixedChart.setOption({
       graphic: [
         {
@@ -374,8 +378,8 @@ export function Filter (nodeArray, linkArray) {
  *
  * @param {any} auto 预处过的查询数据
  */
-export function GenerateGraph (auto) {
-  var myChart = echarts.init(document.getElementById('main'));
+export function GenerateGraph (auto, myChart) {
+  // var myChart = echarts.init(document.getElementById('main'));
   // _myChart.showLoading();
   myChart.hideLoading();
   let option = {
@@ -465,8 +469,8 @@ function Seperater (jsonArray) {
  * @param {any} targets vue datamodel里的targets
  * @returns
  */
-export function BuildCypher (conditions, targets) {
-  let path = SearchPath(Seperater(conditions), Seperater(targets), globle_adjTable);
+export function BuildCypher (conditions, targets, globleAdjTable) {
+  let path = SearchPath(Seperater(conditions), Seperater(targets), globleAdjTable);
   let leftPath = '';
   let rightPath = '';
   let pathClause = '';

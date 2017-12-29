@@ -31,6 +31,7 @@
   import {BuildCypher} from '@/common/js/graphUtil';
   import {RawjsonProcessor} from '@/common/js/graphUtil';
   import {GenerateGraph} from '@/common/js/graphUtil';
+  let myChart = echarts.init(document.getElementById('main'));
   export default {
     methods: {
       /**
@@ -39,7 +40,7 @@
        */
       DrawGraph: function () {
         // console.log(BuildCypher(conditions));
-        let statement = BuildCypher(this.conditions, this.targets);
+        let statement = BuildCypher(this.conditions, this.targets, this.$store.globleAdjTable);
         console.log(statement);
         this.$http({
           method: 'POST',
@@ -52,7 +53,7 @@
           },
           headers: { 'Content-Type': 'application/json', 'Authorization': 'Basic bmVvNGo6cm9vdA==' }
         }).then(res => {
-          GenerateGraph(RawjsonProcessor(res.body));
+          GenerateGraph(RawjsonProcessor(res.body), myChart);
         });
       },
       /**

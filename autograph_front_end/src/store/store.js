@@ -9,7 +9,8 @@ export default new Vuex.Store({
   state: {
     globalAdjTable: [],
     tmpName: '',
-    table_data: []
+    table_data: [],
+    targets: []
   },
 
   actions: {
@@ -21,6 +22,9 @@ export default new Vuex.Store({
     },
     pushMessage ({commit}, msg) {
       commit('PUSH_MESSAGE', msg);
+    },
+    pushTarget ({commit}, target) {
+      commit('PUSH_TARGET', target);
     }
   },
 
@@ -33,6 +37,9 @@ export default new Vuex.Store({
     },
     PUSH_MESSAGE (state, msg) {
       state.table_data.push(msg);
+    },
+    PUSH_TARGET (state, target) {
+      state.targets.push(target);
     }
   }
 
