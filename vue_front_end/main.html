@@ -1,83 +1,92 @@
 <html>
-    <head>
-        <script src ="//unpkg.com/vue/dist/vue.js"></script>
-        <script src ="node_modules/vue-resource/dist/vue-resource.min.js"></script>
-        <script src="//unpkg.com/element-ui@2.0.9/lib/index.js"></script>
-        <script src="echarts.min.js"></script>
-        <link rel="stylesheet" href="//unpkg.com/element-ui@2.0.9/lib/theme-chalk/index.css">
 
-        <style>
-            .el-row {
-                margin-bottom: 10px;
-            }
-            .el-col {
-                margin-bottom: 5px;
-                border-radius: 4px;
-            }
-        </style>
-    </head>
+<head>
+  <script src="//unpkg.com/vue/dist/vue.js"></script>
+  <script src="node_modules/vue-resource/dist/vue-resource.min.js"></script>
+  <script src="//unpkg.com/element-ui@2.0.9/lib/index.js"></script>
+  <script src="echarts.min.js"></script>
+  <link rel="stylesheet" href="//unpkg.com/element-ui@2.0.9/lib/theme-chalk/index.css">
+
+  <style>
+    .el-row {
+      margin-bottom: 10px;
+    }
+
+    .el-col {
+      margin-bottom: 5px;
+      border-radius: 4px;
+    }
+  </style>
+  <div></div>
+</head>
+
 <body>
-    <div style="margin-right: 10%;margin-left: 10%">
-    <div id="fixed" style ="width: auto;height:500px;"></div>
+  <div style="margin-right: 10%;margin-left: 10%">
+    <div id="fixed" style="width: auto;height:500px;"></div>
     <div id="myVue">
-        <el-row :gutter="10">
-            <el-col v-for="condition in conditions" :span="5">
-                <el-input placeholder="condition" v-model="condition.content" suffix-icon="el-icon-circle-close
-                " on-icon-click="RemoveCondition">
-                    <template slot="prepend"><div>{{condition.type}}</div></template>
-                </el-input>
-            </el-col>
-        </el-row>
+      <el-row :gutter="10">
+        <el-col v-for="condition in conditions" :span="5">
+          <el-input placeholder="condition" v-model="condition.content" suffix-icon="el-icon-circle-close
+        " on-icon-click="RemoveCondition">
+            <template slot="prepend">
+              <div>{{condition.type}}</div>
+            </template>
+          </el-input>
+        </el-col>
+      </el-row>
 
-        <el-row :gutter="10">
-            <el-col v-for="target in targets" :span="5">
-                <el-input placeholder="target" v-model="target.content" suffix-icon="el-icon-circle-close
-                " on-icon-click="RemoveTarget">
-                    <template slot="prepend"><div>{{target.type}}</div></template>
-                </el-input>
-            </el-col>
-        </el-row>
-        <el-row type="flex" justify="end">
-            <el-button @click="DrawGraph">Query</el-button>
-        </el-row>
+      <el-row :gutter="10">
+        <el-col v-for="target in targets" :span="5">
+          <el-input placeholder="target" v-model="target.content" suffix-icon="el-icon-circle-close
+        " on-icon-click="RemoveTarget">
+            <template slot="prepend">
+              <div>{{target.type}}</div>
+            </template>
+          </el-input>
+        </el-col>
+      </el-row>
+      <el-row type="flex" justify="end">
+        <el-button @click="DrawGraph">Query</el-button>
+      </el-row>
     </div>
     <div id="resultVue">
-        <el-tabs type="border-card">
-            <el-tab-pane label="Graph">
-                <el-container>
-                    <el-aside width="30%">
-                        <el-table :data="expandable_data" style="width:100%" height="800">
-                            <el-table-column type="expand">
-                                <template scope="props">
-                                    <div v-for="(value, key) in props.row">
-                                        <p>{{key}}:{{value}}</p>
-                                    </div>
-                                </template>
-                            </el-table-column>
-                            <el-table-column label="Name" :prop="prop_name">
-                            </el-table-column>
-                        </el-table>
-                    </el-aside>
-                    <el-main>
-                        <div id = "main" style="height:800px"></div>
-                    </el-main>
-                </el-container>
+      <el-tabs type="border-card">
+        <el-tab-pane label="Graph">
+          <el-container>
+            <el-aside width="30%">
+              <el-table :data="expandable_data" style="width:100%" height="800">
+                <el-table-column type="expand">
+                  <template scope="props">
+                    <div v-for="(value, key) in props.row">
+                      <p>{{key}}:{{value}}</p>
+                    </div>
+                  </template>
+                </el-table-column>
+                <el-table-column label="Name" :prop="prop_name">
+                </el-table-column>
+              </el-table>
+            </el-aside>
+            <el-main>
+              <div id="main" style="height:800px"></div>
+            </el-main>
+          </el-container>
 
-            </el-tab-pane>
-            <el-tab-pane label="Table">
-                <template>
-                    <el-table style="width: 100%" height="800" border>
-                        <el-table-column prop="type" label="Type" width="180">
-                        </el-table-column>
-                        <el-table-column prop="properties" label="Properties">
-                        </el-table-column>
-                    </el-table>
-                </template>
-            </el-tab-pane>
-        </el-tabs>
+        </el-tab-pane>
+        <el-tab-pane label="Table">
+          <template>
+            <el-table style="width: 100%" height="800" border>
+              <el-table-column prop="type" label="Type" width="180">
+              </el-table-column>
+              <el-table-column prop="properties" label="Properties">
+              </el-table-column>
+            </el-table>
+          </template>
+        </el-tab-pane>
+      </el-tabs>
     </div>
-    
+
     <script src="js/graph.js"></script>
 
 </body>
+
 </html>
