@@ -47,4 +47,4 @@ The database can be managed with a provided web-based UI, which supports the gra
 
 ### Implementation
 
-To implement a knowledge graph, a graph database will be much better over databases like Mysql and MongoDb. In this application, we choose Neo4j as our graph database, which is one of the most popular graph database recently. It uses its own sql language called Cypher which is easy to learn and perfectly fits for graph querying. It also offer nice feature to import data from CSV files using cypher script. The import process may take about 30min according to device computation power.
+To implement a knowledge graph, a graph database will be much better over databases like Mysql and MongoDb. In this application, we choose Neo4j as our graph database, which is one of the most popular graph database recently. It uses its own sql language called Cypher which is easy to learn and perfectly fits for graph querying. It also offer nice feature to import data from CSV files using cypher script. The import process may take about 30min for 1TB data according to device computation ability .
